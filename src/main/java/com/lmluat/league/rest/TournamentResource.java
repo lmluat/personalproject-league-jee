@@ -1,4 +1,4 @@
-package com.lmluat.league.controller;
+package com.lmluat.league.rest;
 
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
@@ -6,7 +6,6 @@ import com.lmluat.league.service.TournamentService;
 import com.lmluat.league.service.model.Tournament;
 
 import javax.inject.Inject;
-import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -40,13 +39,9 @@ public class TournamentResource {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response create(Tournament tournament) {
-        try {
-            Tournament createTournament = tournamentService.create(tournament);
-            return Response.created(URI.create("skills/" + createTournament.getId())).entity(createTournament).status(Response.Status.CREATED).build();
-        } catch (InputValidationException e) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(e.getResponseBody()).build();
-        }
+    public Response create(Tournament tournament) throws InputValidationException {
+            Tournament createdTournament = tournamentService.create(tournament);
+            return Response.created(URI.create("skills/" + createdTournament.getId())).entity(createdTournament).status(Response.Status.CREATED).build();
     }
 
 }
