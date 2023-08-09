@@ -5,6 +5,7 @@ import com.lmluat.league.dao.TeamDAO;
 import com.lmluat.league.dao.TeamDetailDAO;
 import com.lmluat.league.dao.TournamentDAO;
 import com.lmluat.league.entity.TeamDetailEntity;
+import com.lmluat.league.entity.TeamEntity;
 import com.lmluat.league.exception.ErrorMessage;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.service.mapper.TeamDetailMapper;
@@ -90,16 +91,21 @@ public class TeamDetailService {
 
         Root<TeamDetailEntity> teamDetailEntityRoot = cq.from(TeamDetailEntity.class);
 
+        cq.select(teamDetailEntityRoot);
+
         List<Predicate> predicates = new ArrayList<>();
 
-        teamName.ifPresent(s -> predicates.add(cb.equal(teamDetailEntityRoot.get("teamName"), s)));
-        tournamentName.ifPresent(s -> predicates.add(cb.equal(teamDetailEntityRoot.get("tournamentName"), s)));
-        coachName.ifPresent(s -> predicates.add(cb.equal(teamDetailEntityRoot.get("coachName"), s)));
+        teamName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("team").get("teamName"), s)));
+        tournamentName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("tournament").get("tournamentName"), s)));
+        coachName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("coach").get("coachName"), s)));
 
         cq.where(predicates.toArray(new Predicate[0]));
 
         return teamDetailMapper.toDTOList(em.createQuery(cq).getResultList());
     }
 
+    private Predicate<TeamDetail> isTeamExisted(String teamName) {
+        return teamDetail -> teamDetail.getName().equals(teamName);
+    }
 
 }
