@@ -20,6 +20,8 @@ public class ErrorMessage {
     public final static String KEY_PLAYER_INGAME_NAME_DUPLICATED = "exception.input.validation.player.ingame.name.duplicated";
     public static final String COACH_NOT_FOUND = "Coach not found";
     public static final String KEY_COACH_NOT_FOUND = "exception.resource.not.found.coach";
+    public static final String RESOURCE_NOT_FOUND = "Resource not found";
+    public static final String KEY_RESOURCE_NOT_FOUND = "exception.resource.not.found.resource";
 
     private ErrorMessage() {
 

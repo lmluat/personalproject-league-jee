@@ -7,6 +7,7 @@ import com.lmluat.league.dao.TournamentDAO;
 import com.lmluat.league.entity.TeamDetailEntity;
 import com.lmluat.league.exception.ErrorMessage;
 import com.lmluat.league.exception.InputValidationException;
+import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.mapper.TeamDetailMapper;
 import com.lmluat.league.service.model.TeamDetail;
 import org.apache.commons.collections4.CollectionUtils;
@@ -85,15 +86,13 @@ public class TeamDetailService {
         }
     }
 
-    public List<TeamDetail> getByCriteria(Optional<String> teamName, Optional<String> tournamentName, Optional<String> coachName) {
+    public List<TeamDetail> getByCriteria(Optional<String> teamName, Optional<String> tournamentName, Optional<String> coachName) throws ResourceNotFoundException {
 
         CriteriaBuilder cb = em.getCriteriaBuilder();
 
         CriteriaQuery<TeamDetailEntity> cq = cb.createQuery(TeamDetailEntity.class);
 
         Root<TeamDetailEntity> teamDetailEntityRoot = cq.from(TeamDetailEntity.class);
-
-        cq.select(teamDetailEntityRoot);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -105,9 +104,11 @@ public class TeamDetailService {
 
         cq.where(predicates.toArray(new Predicate[0]));
 
-        return teamDetailMapper.toDTOList(em.createQuery(cq).getResultList());
+        if (em.createQuery(cq).getResultList().isEmpty()) {
+            throw new ResourceNotFoundException(ErrorMessage.RESOURCE_NOT_FOUND, ErrorMessage.KEY_RESOURCE_NOT_FOUND);
+        }
 
-        Predicate<String>
+        return teamDetailMapper.toDTOList(em.createQuery(cq).getResultList());
     }
 
 
