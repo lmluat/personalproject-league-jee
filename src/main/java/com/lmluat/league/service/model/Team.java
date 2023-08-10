@@ -14,6 +14,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Team {
+    private Long id;
 
     private String teamName;
 

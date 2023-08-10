@@ -7,12 +7,15 @@ import com.lmluat.league.exception.ErrorMessage;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.mapper.TournamentMapper;
+import com.lmluat.league.service.model.TeamDetail;
 import com.lmluat.league.service.model.Tournament;
+import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.time.LocalDate;
@@ -63,15 +66,8 @@ public class TournamentService {
     private void verifyTournament(Tournament tournament) throws InputValidationException {
         Set<ConstraintViolation<Tournament>> violations = validator.validate(tournament);
 
-        if (!violations.isEmpty()) {
-            List<String> errorMessages = new ArrayList<>();
-
-            for (ConstraintViolation<Tournament> violation : violations) {
-                errorMessages.add(violation.getMessage());
-            }
-
-            throw new InputValidationException(ErrorMessage.KEY_TOURNAMENT_NOT_FOUND,
-                    String.join(", ", errorMessages));
+        if (CollectionUtils.isNotEmpty(violations)) {
+            throw new ConstraintViolationException(violations);
         }
 
         if (isDuplicatedName(tournament.getTournamentName().trim())) {

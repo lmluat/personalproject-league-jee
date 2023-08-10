@@ -34,7 +34,7 @@ public class TeamDetailEntity {
 
     @ManyToOne
     @JoinColumn(name = "team_id", nullable = false)
-    private TeamEntity teamEntity;
+    private TeamEntity team;
 
     @ManyToOne
     @JoinColumn(name = "coach_id", nullable = false)

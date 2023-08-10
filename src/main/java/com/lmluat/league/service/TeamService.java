@@ -49,7 +49,7 @@ public class TeamService {
                 .location(team.getLocation().trim())
                 .build();
 
-        return teamMapper.toDTO(teamEntity);
+        return teamMapper.toDTO(teamDAO.create(teamEntity));
     }
 
     private void verifyTeam(Team team) throws InputValidationException {

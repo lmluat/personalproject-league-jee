@@ -18,6 +18,9 @@ public class ErrorMessage {
 
     public final static String PLAYER_INGAME_NAME_DUPLICATED = "Player Ingame Name is duplicated";
     public final static String KEY_PLAYER_INGAME_NAME_DUPLICATED = "exception.input.validation.player.ingame.name.duplicated";
+    public static final String COACH_NOT_FOUND = "Coach not found";
+    public static final String KEY_COACH_NOT_FOUND = "exception.resource.not.found.coach";
+
     private ErrorMessage() {
 
     }
