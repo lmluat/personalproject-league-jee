@@ -5,17 +5,16 @@ import com.lmluat.league.dao.TeamDAO;
 import com.lmluat.league.dao.TeamDetailDAO;
 import com.lmluat.league.dao.TournamentDAO;
 import com.lmluat.league.entity.TeamDetailEntity;
-import com.lmluat.league.entity.TeamEntity;
 import com.lmluat.league.exception.ErrorMessage;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.service.mapper.TeamDetailMapper;
 import com.lmluat.league.service.model.TeamDetail;
-import com.lmluat.league.service.model.Tournament;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -50,6 +49,9 @@ public class TeamDetailService {
     private TeamDAO teamDAO;
 
     @Inject
+    private TeamService teamService;
+
+    @Inject
     private CoachDAO coachDAO;
 
     @Inject
@@ -75,7 +77,7 @@ public class TeamDetailService {
         return teamDetailMapper.toDTO(teamDetailEntity);
     }
 
-    private void verifyTeamDetail(TeamDetail teamDetail) throws InputValidationException {
+    private void verifyTeamDetail(TeamDetail teamDetail) throws ConstraintViolationException {
         Set<ConstraintViolation<TeamDetail>> violations = validator.validate(teamDetail);
 
         if (CollectionUtils.isNotEmpty(violations)) {
@@ -95,17 +97,18 @@ public class TeamDetailService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        teamName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("team").get("teamName"), s)));
-        tournamentName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("tournament").get("tournamentName"), s)));
-        coachName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("coach").get("coachName"), s)));
+        teamName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("team").get("teamName"), "%" + s.trim() + "%")));
+
+        tournamentName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("tournament").get("tournamentName"), "%" + s.trim() + "%")));
+
+        coachName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("coach").get("ingameName"), "%" + s.trim() + "%")));
 
         cq.where(predicates.toArray(new Predicate[0]));
 
         return teamDetailMapper.toDTOList(em.createQuery(cq).getResultList());
+
+        Predicate<String>
     }
 
-    private Predicate<TeamDetail> isTeamExisted(String teamName) {
-        return teamDetail -> teamDetail.getName().equals(teamName);
-    }
 
 }

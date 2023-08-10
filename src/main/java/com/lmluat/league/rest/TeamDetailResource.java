@@ -1,6 +1,7 @@
 package com.lmluat.league.rest;
 
 import com.lmluat.league.exception.InputValidationException;
+import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.TeamDetailService;
 import com.lmluat.league.service.model.TeamDetail;
 
@@ -40,7 +41,7 @@ public class TeamDetailResource {
     @Path("/criteria")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getByCriteria(@QueryParam("teamName") String teamName, @QueryParam("tournamentName") String tournamentName, @QueryParam("coachName") String coachName) {
+    public Response getByCriteria(@QueryParam("teamName") String teamName, @QueryParam("tournamentName") String tournamentName, @QueryParam("coachName") String coachName) throws ResourceNotFoundException {
         return Response.ok(teamDetailService.getByCriteria(Optional.ofNullable(teamName), Optional.ofNullable(tournamentName), Optional.ofNullable(coachName))).build();
     }
 
