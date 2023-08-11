@@ -7,7 +7,6 @@ import com.lmluat.league.exception.ErrorMessage;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.mapper.TournamentMapper;
-import com.lmluat.league.service.model.TeamDetail;
 import com.lmluat.league.service.model.Tournament;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
@@ -19,7 +18,6 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -37,7 +35,7 @@ public class TournamentService {
     @Inject
     private TournamentMapper tournamentMapper;
 
-    public List<Tournament> getAll() throws ResourceNotFoundException {
+    public List<Tournament> getAll() {
         return tournamentMapper.toDTOList(tournamentDAO.findAll());
     }
 

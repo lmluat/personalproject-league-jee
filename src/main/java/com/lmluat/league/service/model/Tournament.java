@@ -14,10 +14,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
+
+import static com.lmluat.league.exception.ErrorMessage.TOURNAMENT_NAME_LENGTH_CONSTRAINT;
+import static com.lmluat.league.exception.ErrorMessage.TOURNAMENT_NAME_NULL_OR_BLANK;
 
 @Getter
 @Setter
@@ -29,7 +33,8 @@ public class Tournament {
 
     private Long id;
 
-    @Size(min = 3, message = "Tournament Name must have at least 3 characters")
+    @Size(min = 3, message = TOURNAMENT_NAME_LENGTH_CONSTRAINT)
+    @NotBlank(message = TOURNAMENT_NAME_NULL_OR_BLANK)
     private String tournamentName;
 
 

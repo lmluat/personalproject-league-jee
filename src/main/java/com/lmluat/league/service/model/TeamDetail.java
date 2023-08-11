@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -20,13 +21,13 @@ public class TeamDetail {
 
     private Long id;
 
-    @NotBlank
+    @NotNull
     private Long tournamentId;
 
-    @NotBlank
+    @NotNull
     private Long teamId;
 
-    @NotBlank
+    @NotNull
     private Long coachId;
 
     private String tournamentName;

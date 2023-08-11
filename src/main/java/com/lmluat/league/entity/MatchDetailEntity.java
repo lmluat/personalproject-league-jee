@@ -33,7 +33,7 @@ public class MatchDetailEntity {
     private MatchEntity match;
 
     @Column(name = "game_id")
-    private int gameId;
+    private Integer gameId;
 
     @ManyToOne
     @JoinColumn(name = "team_one", nullable = false)
