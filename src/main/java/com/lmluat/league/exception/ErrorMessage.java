@@ -23,6 +23,7 @@ public class ErrorMessage {
     public static final String RESOURCE_NOT_FOUND = "Resource not found";
     public static final String KEY_RESOURCE_NOT_FOUND = "exception.resource.not.found.resource";
 
+
     private ErrorMessage() {
 
     }

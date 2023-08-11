@@ -15,7 +15,6 @@ import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -48,9 +47,6 @@ public class TeamDetailService {
 
     @Inject
     private TeamDAO teamDAO;
-
-    @Inject
-    private TeamService teamService;
 
     @Inject
     private CoachDAO coachDAO;
@@ -94,6 +90,8 @@ public class TeamDetailService {
 
         Root<TeamDetailEntity> teamDetailEntityRoot = cq.from(TeamDetailEntity.class);
 
+        cq.select(teamDetailEntityRoot);
+
         List<Predicate> predicates = new ArrayList<>();
 
         teamName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("team").get("teamName"), "%" + s.trim() + "%")));
@@ -110,6 +108,5 @@ public class TeamDetailService {
 
         return teamDetailMapper.toDTOList(em.createQuery(cq).getResultList());
     }
-
 
 }

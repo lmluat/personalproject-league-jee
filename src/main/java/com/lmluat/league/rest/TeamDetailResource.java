@@ -45,5 +45,11 @@ public class TeamDetailResource {
         return Response.ok(teamDetailService.getByCriteria(Optional.ofNullable(teamName), Optional.ofNullable(tournamentName), Optional.ofNullable(coachName))).build();
     }
 
-
+//    @GET
+//    @Path("/hibernate-criteria")
+//    @Consumes({MediaType.APPLICATION_JSON})
+//    @Produces({MediaType.APPLICATION_JSON})
+//    public Response getByCriteriaUsingHibernateCriteria(@QueryParam("sponsor") String teamName, @QueryParam("tournamentName") String tournamentName, @QueryParam("coachName") String coachName) throws ResourceNotFoundException {
+//        return Response.ok(teamDetailService.getByCriteriaUsingHibernateCriteriaQuery(Optional.ofNullable(tournamentName), Optional.ofNullable(coachName))).build();
+//    }
 }
