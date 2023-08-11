@@ -32,7 +32,7 @@ public abstract class BaseDAO<E> {
     }
 
     public Optional<E> findById(Long id) {
-        return Optional.of(em.find(entityClass, id));
+        return Optional.ofNullable(em.find(entityClass, id));
     }
 
     public List<E> findAll() {

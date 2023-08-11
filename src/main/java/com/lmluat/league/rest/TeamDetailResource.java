@@ -4,6 +4,7 @@ import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.TeamDetailService;
 import com.lmluat.league.service.model.TeamDetail;
+import com.lmluat.league.service.model.custom.TeamDetailDTO;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -45,11 +46,12 @@ public class TeamDetailResource {
         return Response.ok(teamDetailService.getByCriteria(Optional.ofNullable(teamName), Optional.ofNullable(tournamentName), Optional.ofNullable(coachName))).build();
     }
 
-//    @GET
-//    @Path("/hibernate-criteria")
-//    @Consumes({MediaType.APPLICATION_JSON})
-//    @Produces({MediaType.APPLICATION_JSON})
-//    public Response getByCriteriaUsingHibernateCriteria(@QueryParam("sponsor") String teamName, @QueryParam("tournamentName") String tournamentName, @QueryParam("coachName") String coachName) throws ResourceNotFoundException {
-//        return Response.ok(teamDetailService.getByCriteriaUsingHibernateCriteriaQuery(Optional.ofNullable(tournamentName), Optional.ofNullable(coachName))).build();
-//    }
+    @POST
+    @Path("/{id}")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response update(@PathParam("id") Long id, TeamDetail teamDetail) throws ResourceNotFoundException {
+        TeamDetail updatedTeamDetail = teamDetailService.update(teamDetail, id);
+        return Response.created(URI.create("/team-details/" + updatedTeamDetail.getId())).entity(updatedTeamDetail).build();
+    }
 }

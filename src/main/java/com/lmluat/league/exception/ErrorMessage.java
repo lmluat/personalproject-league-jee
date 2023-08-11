@@ -23,6 +23,9 @@ public class ErrorMessage {
     public static final String RESOURCE_NOT_FOUND = "Resource not found";
     public static final String KEY_RESOURCE_NOT_FOUND = "exception.resource.not.found.resource";
 
+    public static final String TEAM_DETAIL_NOT_FOUND = "Team Detail not found";
+    public static final String KEY_TEAM_DETAIL_NOT_FOUND = "exception.resource.not.found.team.detail";
+
 
     private ErrorMessage() {
 
