@@ -45,6 +45,10 @@ public class ErrorMessage {
 
     public static final String INVALID_INPUT_DATA = "Invalid input data";
     public static final String KEY_INVALID_INPUT_DATA = "exception.input.validation.input.data";
+
+    public static final String MATCH_DETAIL_NOT_FOUND = "Match Detail not found";
+    public static final String KEY_MATCH_DETAIL_NOT_FOUND = "exception.resource.not.found.match.detail";
+
     private ErrorMessage() {
 
     }

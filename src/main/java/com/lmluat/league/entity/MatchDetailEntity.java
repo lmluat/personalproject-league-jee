@@ -37,17 +37,13 @@ public class MatchDetailEntity {
 
     @ManyToOne
     @JoinColumn(name = "team_one", nullable = false)
-    private TeamEntity teamOne;
+    private TeamDetailEntity teamOne;
 
     @ManyToOne
     @JoinColumn(name = "team_two", nullable = false)
-    private TeamEntity teamTwo;
+    private TeamDetailEntity teamTwo;
 
-    @ManyToOne
-    @JoinColumn(name = "winning_team")
-    private TeamEntity winningTeam;
+    private String winningTeamName;
 
-    @ManyToOne
-    @JoinColumn(name = "mvp_player")
-    private PlayerEntity mostValuablePlayer;
+    private String mostValuablePlayerName;
 }

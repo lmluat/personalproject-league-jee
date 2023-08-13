@@ -4,6 +4,7 @@ package com.lmluat.league.service.mapper;
 import com.lmluat.league.entity.TeamDetailEntity;
 import com.lmluat.league.service.model.custom.TeamDetailDTO;
 import org.mapstruct.BeanMapping;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -18,4 +19,7 @@ public interface EntityMapper<E, D> {
     E toEntity(D DTO);
 
     List<E> toEntityList(List<D> DTOList);
+
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void mapFromDto(D d, @MappingTarget E entity);
 }

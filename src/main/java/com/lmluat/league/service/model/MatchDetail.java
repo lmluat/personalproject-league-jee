@@ -1,15 +1,14 @@
 package com.lmluat.league.service.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
 
 import static com.lmluat.league.exception.ErrorMessage.INPUT_DATA_NULL_OR_BLANK;
 import static com.lmluat.league.exception.ErrorMessage.INVALID_GAME_ID;
@@ -19,6 +18,7 @@ import static com.lmluat.league.exception.ErrorMessage.INVALID_GAME_ID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MatchDetail {
     private Long id;
 
@@ -33,7 +33,23 @@ public class MatchDetail {
 
     private Long teamTwoId;
 
+    private String teamOneName;
+
+    @Override
+    public String toString() {
+        return "MatchDetail{" +
+                "id=" + id +
+                ", matchId=" + matchId +
+                ", gameId=" + gameId +
+                '}';
+    }
+
+    private String teamTwoName;
+
+    private Long winningTeamId;
+
     private String winningTeamName;
 
     private String mostValuablePlayerName;
+
 }

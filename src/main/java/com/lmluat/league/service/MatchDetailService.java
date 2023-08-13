@@ -3,6 +3,7 @@ package com.lmluat.league.service;
 import com.lmluat.league.dao.MatchDAO;
 import com.lmluat.league.dao.MatchDetailDAO;
 import com.lmluat.league.dao.TeamDAO;
+import com.lmluat.league.dao.TeamDetailDAO;
 import com.lmluat.league.entity.MatchDetailEntity;
 
 import com.lmluat.league.exception.InputValidationException;
@@ -20,8 +21,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.lmluat.league.exception.ErrorMessage.*;
 
@@ -43,31 +44,45 @@ public class MatchDetailService {
     private TeamDAO teamDAO;
 
     @Inject
+    private TeamDetailDAO teamDetailDAO;
+
+    @Inject
     private MatchDetailMapper matchDetailMapper;
 
-    private final Integer gameIdDefault = 1;
     private final String defaultStatus = "Updating";
 
     public MatchDetail create(MatchDetail matchDetail) throws ResourceNotFoundException, InputValidationException {
 
         verifyMatchDetail(matchDetail);
         checkDuplicatedTeam(matchDetail.getTeamOneId(), matchDetail.getTeamTwoId());
-
-        checkGameId(matchDetail);
+        checkMatchIdAndGameId(matchDetail);
 
         MatchDetailEntity matchDetailEntity = MatchDetailEntity.builder()
                 .match(matchDAO.findById(matchDetail.getMatchId()).orElseThrow(() -> new ResourceNotFoundException(MATCH_NOT_FOUND, KEY_MATCH_NOT_FOUND)))
                 .gameId(matchDetail.getGameId())
-                .teamOne(teamDAO.findById(matchDetail.getTeamOneId()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)))
-                .teamTwo(teamDAO.findById(matchDetail.getTeamTwoId()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)))
+                .teamOne(teamDetailDAO.findById(matchDetail.getTeamOneId()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)))
+                .teamTwo(teamDetailDAO.findById(matchDetail.getTeamTwoId()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)))
                 .build();
 
-        matchDetailDAO.create(matchDetailEntity);
+        setWinningTeamNameAndMVPPlayer(matchDetail, matchDetailEntity);
 
-        matchDetail.setMostValuablePlayerName(defaultStatus);
-        matchDetail.setWinningTeamName(defaultStatus);
+        return matchDetailMapper.toDTO(matchDetailDAO.create(matchDetailEntity));
+    }
 
-        return matchDetail;
+
+    public MatchDetail update(MatchDetail matchDetail, Long id) throws ResourceNotFoundException, InputValidationException {
+
+        MatchDetailEntity matchDetailEntity = matchDetailDAO.findById(id).orElseThrow(() -> new ResourceNotFoundException(MATCH_DETAIL_NOT_FOUND, KEY_MATCH_DETAIL_NOT_FOUND));
+
+        Long winningTeamId = matchDetail.getWinningTeamId();
+
+        if (Objects.equals(winningTeamId, matchDetailEntity.getTeamOne().getId()) || Objects.equals(winningTeamId, matchDetailEntity.getTeamTwo().getId())) {
+            matchDetailEntity.setWinningTeamName(teamDetailDAO.findById(winningTeamId).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)).getTeam().getTeamName());
+        } else throw new InputValidationException(INVALID_INPUT_DATA, KEY_INVALID_INPUT_DATA);
+
+        matchDetailDAO.update(matchDetailEntity);
+
+        return matchDetailMapper.toDTO(matchDetailEntity);
     }
 
     private void checkDuplicatedTeam(Long teamOneId, Long teamTwoId) throws InputValidationException {
@@ -91,16 +106,37 @@ public class MatchDetailService {
 
     }
 
-    private void checkGameId(MatchDetail matchDetail) throws InputValidationException {
+    private void checkMatchIdAndGameId(MatchDetail matchDetail) throws InputValidationException {
         Integer gameId = matchDetail.getGameId();
 
-        List<Integer> gameIdList = matchDetailDAO.findGameIdListById(Optional.ofNullable(matchDetail.getMatchId()));
-        System.out.println(gameIdList);
+        if (CollectionUtils.isNotEmpty(matchDetailDAO.findByMatchId(matchDetail.getMatchId()))) {
+            for (MatchDetailEntity matchDetailEntity : matchDetailDAO.findByMatchId(matchDetail.getMatchId())) {
+                System.out.println(matchDetailEntity.getGameId());
+            }
 
-        for (Integer gameId2 : gameIdList) {
-            if (Objects.equals(gameId2, gameId)) {
-                throw new InputValidationException(INVALID_INPUT_DATA, KEY_INVALID_INPUT_DATA);
+            List<Integer> gameIdList = matchDetailDAO.findByMatchId(matchDetail.getMatchId()).stream().map(MatchDetailEntity::getGameId).collect(Collectors.toList());
+
+            for (Integer existedGameId : gameIdList) {
+                if (Objects.equals(existedGameId, gameId)) {
+                    throw new InputValidationException("Game id is existed", "exception.input.validation.game.id.existed");
+                }
             }
         }
     }
+
+    private void setWinningTeamNameAndMVPPlayer(MatchDetail matchDetail, MatchDetailEntity matchDetailEntity) throws ResourceNotFoundException {
+        if (matchDetail.getWinningTeamId() != null) {
+            matchDetailEntity.setWinningTeamName(teamDetailDAO.findById(matchDetail.getWinningTeamId()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)).getTeam().getTeamName());
+        } else {
+            matchDetailEntity.setWinningTeamName(defaultStatus);
+            matchDetailEntity.setMostValuablePlayerName(defaultStatus);
+        }
+
+        if (matchDetail.getMostValuablePlayerName() == null) {
+            matchDetailEntity.setMostValuablePlayerName(defaultStatus);
+        } else {
+            matchDetailEntity.setMostValuablePlayerName(matchDetail.getMostValuablePlayerName());
+        }
+    }
+
 }
