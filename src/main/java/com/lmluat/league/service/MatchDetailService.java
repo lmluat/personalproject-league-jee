@@ -87,8 +87,6 @@ public class MatchDetailService {
 
         setWinningTeamAndMVPPlayerForUpdate(matchDetail, matchDetailEntity);
 
-        matchDetailMapper.mapFromDto(matchDetail, matchDetailEntity);
-
         checkDuplicatedTeamAfterUpdate(matchDetailEntity);
 
         if (matchDetail.getWinningTeamId() != null) {
@@ -161,12 +159,25 @@ public class MatchDetailService {
         Long teamOneIdCurrent = matchDetailEntity.getTeamOne().getId();
         Long teamTwoIdCurrent = matchDetailEntity.getTeamTwo().getId();
 
+        List<Optional<Long>> teamIdList = List.of(teamOneId, teamTwoId);
+
+        if (winningTeamId.isPresent() && teamOneId.isPresent() && teamTwoId.isPresent()) {
+            if (!teamIdList.contains(winningTeamId)) {
+                throw new InputValidationException("Winning team ID is invalid", "exception.input.validation.team.id.invalid");
+            } else {
+                matchDetailEntity.setTeamOne(teamDetailDAO.findById(teamOneId.get()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)));
+                matchDetailEntity.setTeamTwo(teamDetailDAO.findById(teamTwoId.get()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)));
+                matchDetailEntity.setWinningTeam(teamDetailDAO.findById(winningTeamId.get()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)));
+            }
+            return;
+        }
+
         if (winningTeamId.isPresent()) {
-            if (Objects.equals(winningTeamId, teamOneId) || Objects.equals(winningTeamId, teamTwoId)) {
+            if (winningTeamId.get().equals(teamOneIdCurrent) || winningTeamId.get().equals(teamTwoIdCurrent)) {
                 matchDetailEntity.setWinningTeam(teamDetailDAO.findById(matchDetail.getWinningTeamId()).orElseThrow(() -> new ResourceNotFoundException(TEAM_NOT_FOUND, KEY_TEAM_NOT_FOUND)));
                 matchDetail.setWinningTeamName(matchDetailEntity.getWinningTeam().getTeam().getTeamName());
             } else {
-                throw new InputValidationException(INVALID_INPUT_DATA, KEY_INVALID_INPUT_DATA);
+                throw new InputValidationException("Winning match id is invalid", "exception.input.validation.match.id.invalid");
             }
         }
 
