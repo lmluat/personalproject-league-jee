@@ -6,6 +6,7 @@ import com.lmluat.league.dao.TeamDAO;
 import com.lmluat.league.dao.TeamDetailDAO;
 import com.lmluat.league.entity.MatchDetailEntity;
 
+import com.lmluat.league.entity.MatchEntity;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.mapper.MatchDetailMapper;
@@ -23,6 +24,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -89,9 +91,9 @@ public class MatchDetailService {
 
         checkDuplicatedTeamAfterUpdate(matchDetailEntity);
 
-        if (matchDetail.getWinningTeamId() != null) {
-            matchDetail.setWinningTeamName(matchDetailEntity.getWinningTeam().getTeam().getTeamName());
-        }
+//        if (matchDetail.getWinningTeamId() != null) {
+//            matchDetail.setWinningTeamName(matchDetailEntity.getWinningTeam().getTeam().getTeamName());
+//        }
 
         return matchDetailMapper.toDTO(matchDetailDAO.update(matchDetailEntity));
     }
@@ -161,6 +163,10 @@ public class MatchDetailService {
 
         List<Optional<Long>> teamIdList = List.of(teamOneId, teamTwoId);
 
+        if (matchDetail.getMostValuablePlayerName() != null) {
+            matchDetailEntity.setMostValuablePlayerName(matchDetail.getMostValuablePlayerName());
+        }
+
         if (winningTeamId.isPresent() && teamOneId.isPresent() && teamTwoId.isPresent()) {
             if (!teamIdList.contains(winningTeamId)) {
                 throw new InputValidationException("Winning team ID is invalid", "exception.input.validation.team.id.invalid");
@@ -194,6 +200,25 @@ public class MatchDetailService {
                 matchDetailEntity.setWinningTeam(null);
             }
         }
+    }
+
+    public List<MatchDetail> getTeamWithHighestWinningGames(Long tournamentId) throws ResourceNotFoundException {
+        List<MatchEntity> matchEntityList = matchDAO.findByTournamentId(tournamentId);
+
+        List<MatchDetailEntity> matchDetailEntityList = matchDetailDAO.findByTournamentId(tournamentId);
+
+        HashMap<Long,Integer> teamWinningGameList = new HashMap<>();
+
+        for (MatchDetailEntity matchDetailEntity : matchDetailEntityList) {
+            teamWinningGameList.put(matchDetailEntity.getTeamOne().getId(), 0);
+            teamWinningGameList.put(matchDetailEntity.getTeamTwo().getId(), 0);
+        }
+
+        for (MatchEntity matchEntity : matchEntityList) {
+            teamWinningGameList.put()
+        }
+
+
     }
 }
 
