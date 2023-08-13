@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapKey;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -32,9 +34,6 @@ public class MatchDetailEntity {
     @JoinColumn(name = "match_id", nullable = false)
     private MatchEntity match;
 
-    @Column(name = "game_id")
-    private Integer gameId;
-
     @ManyToOne
     @JoinColumn(name = "team_one", nullable = false)
     private TeamDetailEntity teamOne;
@@ -43,7 +42,8 @@ public class MatchDetailEntity {
     @JoinColumn(name = "team_two", nullable = false)
     private TeamDetailEntity teamTwo;
 
-    private String winningTeamName;
+    @OneToOne
+    private TeamDetailEntity winningTeam;
 
     private String mostValuablePlayerName;
 }

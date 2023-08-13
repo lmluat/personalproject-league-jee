@@ -19,8 +19,7 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
         super(MatchDetailEntity.class);
     }
 
-    public List<Integer> findGameIdListById(Optional<Long> matchId) {
-
+    public Optional<List<MatchDetailEntity>> findByMatchId(Long matchId) {
         CriteriaBuilder cq = em.getCriteriaBuilder();
         CriteriaQuery<MatchDetailEntity> cb = cq.createQuery(MatchDetailEntity.class);
 
@@ -28,23 +27,10 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
 
         cb.select(root);
 
-        matchId.ifPresent(m -> cq.equal(root.get("match").get("id"), m));
+        cb.where(cq.equal(root.get("match").get("id"), matchId));
 
-        return em.createQuery(cb).getResultList().stream().map(MatchDetailEntity::getGameId).collect(Collectors.toList());
-    }
+        Optional<List<MatchDetailEntity>> matchDetailEntityList = Optional.of(em.createQuery(cb).getResultList());
 
-    public List<MatchDetailEntity> findByMatchId(Long matchId) {
-        CriteriaBuilder cq = em.getCriteriaBuilder();
-        CriteriaQuery<MatchDetailEntity> cb = cq.createQuery(MatchDetailEntity.class);
-
-        Root<MatchDetailEntity> root = cb.from(MatchDetailEntity.class);
-
-        cb.select(root);
-
-        if(matchId != null){
-            cb.where(root.get("match").get("id").in(matchId));
-        }
-
-        return em.createQuery(cb).getResultList();
+        return matchDetailEntityList;
     }
 }

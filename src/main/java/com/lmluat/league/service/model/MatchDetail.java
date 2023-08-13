@@ -25,28 +25,16 @@ public class MatchDetail {
     @NotNull(message = INPUT_DATA_NULL_OR_BLANK)
     private Long matchId;
 
-    @NotNull(message = INPUT_DATA_NULL_OR_BLANK)
-    @Positive(message = INVALID_GAME_ID)
-    private Integer gameId;
-
     private Long teamOneId;
 
     private Long teamTwoId;
 
-    private String teamOneName;
+    private Long winningTeamId;
 
-    @Override
-    public String toString() {
-        return "MatchDetail{" +
-                "id=" + id +
-                ", matchId=" + matchId +
-                ", gameId=" + gameId +
-                '}';
-    }
+    private String teamOneName;
 
     private String teamTwoName;
 
-    private Long winningTeamId;
 
     private String winningTeamName;
 

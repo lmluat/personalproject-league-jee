@@ -13,5 +13,9 @@ public interface MatchDetailMapper extends EntityMapper<MatchDetailEntity, Match
     @Mapping(target = "teamOneName",source = "teamOne.team.teamName")
     @Mapping(target = "teamTwoName",source = "teamTwo.team.teamName")
     @Mapping(target = "matchId",source = "match.id")
+    @Mapping(target = "winningTeamName",source = "winningTeam.team.teamName")
     MatchDetail toDTO(MatchDetailEntity entity);
+
+    @Override
+    MatchDetailEntity toEntity(MatchDetail DTO);
 }
