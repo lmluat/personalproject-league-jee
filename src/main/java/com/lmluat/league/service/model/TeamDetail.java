@@ -38,4 +38,14 @@ public class TeamDetail {
 
     @Size(min = 1, message = "Sponsor is required")
     private String sponsor;
+
+    @Override
+    public String toString() {
+        return "TeamDetail{" +
+                "tournamentName='" + tournamentName + '\'' +
+                ", teamName='" + teamName + '\'' +
+                ", coachName='" + coachName + '\'' +
+                ", sponsor='" + sponsor + '\'' +
+                '}';
+    }
 }

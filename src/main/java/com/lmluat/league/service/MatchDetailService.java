@@ -2,30 +2,32 @@ package com.lmluat.league.service;
 
 import com.lmluat.league.dao.MatchDAO;
 import com.lmluat.league.dao.MatchDetailDAO;
-import com.lmluat.league.dao.TeamDAO;
 import com.lmluat.league.dao.TeamDetailDAO;
 import com.lmluat.league.entity.MatchDetailEntity;
 
-import com.lmluat.league.entity.MatchEntity;
+import com.lmluat.league.entity.TeamDetailEntity;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.mapper.MatchDetailMapper;
+import com.lmluat.league.service.mapper.TeamDetailMapper;
 import com.lmluat.league.service.model.MatchDetail;
+import com.lmluat.league.service.model.TeamDetail;
+import com.lmluat.league.service.model.custom.TeamDetailDTO;
 import org.apache.commons.collections4.CollectionUtils;
-import org.hibernate.Session;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -54,6 +56,8 @@ public class MatchDetailService {
     @Inject
     private MatchDetailMapper matchDetailMapper;
 
+    @Inject
+    private TeamDetailMapper teamDetailMapper;
     private final String defaultStatus = "Updating";
 
     public MatchDetail create(MatchDetail matchDetail) throws ResourceNotFoundException, InputValidationException {
@@ -91,10 +95,6 @@ public class MatchDetailService {
 
         checkDuplicatedTeamAfterUpdate(matchDetailEntity);
 
-//        if (matchDetail.getWinningTeamId() != null) {
-//            matchDetail.setWinningTeamName(matchDetailEntity.getWinningTeam().getTeam().getTeamName());
-//        }
-
         return matchDetailMapper.toDTO(matchDetailDAO.update(matchDetailEntity));
     }
 
@@ -121,8 +121,14 @@ public class MatchDetailService {
 
     private void verifyMatchDetail(MatchDetail matchDetail) throws InputValidationException {
         if (matchDetailDAO.findByMatchId(matchDetail.getMatchId()).get().size() > 0) {
-            System.out.println(matchDetailDAO.findByMatchId(matchDetail.getMatchId()).get().get(0).getMatch().getId());
             throw new InputValidationException("Match detail for match is existed", "exception.input.validation.match.detail.exists");
+        }
+        Long tournamentId = matchDAO.findById(matchDetail.getMatchId()).get().getTournament().getId();
+
+        List<Long> teamDetailIdList = teamDetailDAO.findByTournamentId(tournamentId).stream().map(TeamDetailEntity::getId).collect(Collectors.toList());
+
+        if (!teamDetailIdList.contains(matchDetail.getTeamOneId()) || !teamDetailIdList.contains(matchDetail.getTeamTwoId())) {
+            throw new InputValidationException("Team is invalid", "exception.input.validation.team.invalid");
         }
 
         Set<ConstraintViolation<MatchDetail>> violations = validator.validate(matchDetail);
@@ -202,23 +208,32 @@ public class MatchDetailService {
         }
     }
 
-    public List<MatchDetail> getTeamWithHighestWinningGames(Long tournamentId) throws ResourceNotFoundException {
-        List<MatchEntity> matchEntityList = matchDAO.findByTournamentId(tournamentId);
+    public List<TeamDetailDTO> getRankingTableByTournamentId(Long tournamentId) {
 
-        List<MatchDetailEntity> matchDetailEntityList = matchDetailDAO.findByTournamentId(tournamentId);
+        List<TeamDetail> teamDetailList = teamDetailMapper.toDTOList(teamDetailDAO.findByTournamentId(tournamentId));
 
-        HashMap<Long,Integer> teamWinningGameList = new HashMap<>();
+        Map<TeamDetail, Optional<Integer>> teamWinningGameList = new HashMap<TeamDetail, Optional<Integer>>();
 
-        for (MatchDetailEntity matchDetailEntity : matchDetailEntityList) {
-            teamWinningGameList.put(matchDetailEntity.getTeamOne().getId(), 0);
-            teamWinningGameList.put(matchDetailEntity.getTeamTwo().getId(), 0);
+        for (TeamDetail teamDetail : teamDetailList) {
+            Integer teamWinningGameTotal = matchDetailDAO.findWinningGamesByTeamIdAndTournamentId(Optional.ofNullable(teamDetail.getId()), Optional.ofNullable(tournamentId)).size();
+            teamWinningGameList.put(teamDetail, Optional.of(teamWinningGameTotal));
         }
+        List<TeamDetailDTO> teamDetailDTOList = new ArrayList<>();
 
-        for (MatchEntity matchEntity : matchEntityList) {
-            teamWinningGameList.put()
-        }
+        teamWinningGameList.forEach((teamDetail, winningGameTotal) -> {
+            TeamDetailDTO teamDetailDTO = new TeamDetailDTO();
 
+            teamDetailDTO.setTeamName(teamDetail.getTeamName());
+            teamDetailDTO.setWins(winningGameTotal.get());
 
+            teamDetailDTOList.add(teamDetailDTO);
+        });
+
+        return teamDetailDTOList.stream().sorted(Comparator.comparing(TeamDetailDTO::getWins).reversed()).collect(Collectors.toList());
+    }
+
+    public List<MatchDetail> getBetweenDates(Optional<Long> tournamentId, LocalDate startDate, LocalDate endDate) {
+        return matchDetailMapper.toDTOList(matchDetailDAO.findBetweenDates(tournamentId, startDate, endDate));
     }
 }
 

@@ -7,12 +7,14 @@ import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.model.Match;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.swing.text.html.Option;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,8 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
     public MatchDetailDAO() {
         super(MatchDetailEntity.class);
     }
+    @Inject
+    private MatchDAO matchDAO;
 
     public Optional<List<MatchDetailEntity>> findByMatchId(Long matchId) {
         CriteriaBuilder cq = em.getCriteriaBuilder();
@@ -35,9 +39,7 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
 
         cb.where(cq.equal(root.get("match").get("id"), matchId));
 
-        Optional<List<MatchDetailEntity>> matchDetailEntityList = Optional.of(em.createQuery(cb).getResultList());
-
-        return matchDetailEntityList;
+        return Optional.of(em.createQuery(cb).getResultList());
     }
 
     public List<MatchDetailEntity> findByCriteria(Optional<Long> teamId, Optional<Long> tournamentId) {
@@ -88,6 +90,26 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
 
         return em.createQuery(cq).getResultList();
     }
+
+    public List<MatchDetailEntity> findBetweenDates(Optional<Long> tournamentId,LocalDate fromDate, LocalDate toDate) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+
+        CriteriaQuery<MatchDetailEntity> cq = cb.createQuery(MatchDetailEntity.class);
+
+        Root<MatchDetailEntity> root = cq.from(MatchDetailEntity.class);
+
+        Join<MatchDetailEntity, MatchEntity> matchJoin = root.join("match");
+
+        Predicate betweenDates = cb.between(matchJoin.get("matchDate"), fromDate, toDate);
+        Predicate inTournamentId = cb.equal(root.get("match").get("tournament").get("id"), tournamentId.orElse(null));
+
+        cq.select(root).where(betweenDates, inTournamentId);
+
+        return em.createQuery(cq).getResultList();
+    }
+
+
+
 
 
 }

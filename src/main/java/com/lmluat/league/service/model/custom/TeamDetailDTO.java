@@ -11,8 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeamDetailDTO {
-    private Long tournamentId;
-    private Long teamId;
-    private Long coachId;
-    private String sponsor;
+    private String teamName;
+    private Integer wins;
 }

@@ -1,14 +1,11 @@
 package com.lmluat.league.rest;
 
-import com.lmluat.league.entity.MatchDetailEntity;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.MatchDetailService;
 import com.lmluat.league.service.model.MatchDetail;
-import com.lmluat.league.service.model.TeamDetail;
 
 import javax.inject.Inject;
-import javax.swing.text.html.Option;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -19,6 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Path("/match-details")
@@ -44,10 +42,18 @@ public class MatchDetailResource {
     }
 
     @GET
-    @Path("/criteria")
+    @Path("/ranking")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getByCriteria(@QueryParam("teamId") Optional<Long> teamId, @QueryParam("tournamentId") Optional<Long> tournamentId) throws InputValidationException, ResourceNotFoundException {
-        return Response.ok(matchDetailService.getTeamWithHighestWinningGames(teamId, tournamentId)).build();
+    public Response getByCriteria(@QueryParam("tournamentId") Long tournamentId) {
+        return Response.ok(matchDetailService.getRankingTableByTournamentId(tournamentId)).build();
     }
+
+//    @GET
+//    @Path("/dates")
+//    @Consumes({MediaType.APPLICATION_JSON})
+//    @Produces({MediaType.APPLICATION_JSON})
+//    public Response getBetweenDates(@QueryParam("tournamentId") Optional<Long> tournamentId, @QueryParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate, @QueryParam("endDate") LocalDate endDate) throws ResourceNotFoundException {
+//        return Response.ok(matchDetailService.getBetweenDates(tournamentId, startDate, endDate)).build();
+//    }
 }

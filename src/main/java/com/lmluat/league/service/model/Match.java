@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class Match {
     private Long id;
+
     @NotNull
     private LocalDate date;
 
