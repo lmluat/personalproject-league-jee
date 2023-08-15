@@ -49,11 +49,11 @@ public class MatchDetailResource {
         return Response.ok(matchDetailService.getRankingTableByTournamentId(tournamentId)).build();
     }
 
-//    @GET
-//    @Path("/dates")
-//    @Consumes({MediaType.APPLICATION_JSON})
-//    @Produces({MediaType.APPLICATION_JSON})
-//    public Response getBetweenDates(@QueryParam("tournamentId") Optional<Long> tournamentId, @QueryParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate, @QueryParam("endDate") LocalDate endDate) throws ResourceNotFoundException {
-//        return Response.ok(matchDetailService.getBetweenDates(tournamentId, startDate, endDate)).build();
-//    }
+    @GET
+    @Path("/dates")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getBetweenDates(@QueryParam("tournamentId") Optional<Long> tournamentId, @QueryParam("startDate") LocalDate startDate, @QueryParam("endDate") LocalDate endDate) throws ResourceNotFoundException {
+        return Response.ok(matchDetailService.getBetweenDates(tournamentId, startDate, endDate)).build();
+    }
 }

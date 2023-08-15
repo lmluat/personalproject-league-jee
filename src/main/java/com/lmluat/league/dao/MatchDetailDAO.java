@@ -100,13 +100,14 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
 
         Join<MatchDetailEntity, MatchEntity> matchJoin = root.join("match");
 
-        Predicate betweenDates = cb.between(matchJoin.get("matchDate"), fromDate, toDate);
+        Predicate betweenDates = cb.between(matchJoin.get("date"), fromDate, toDate);
         Predicate inTournamentId = cb.equal(root.get("match").get("tournament").get("id"), tournamentId.orElse(null));
 
         cq.select(root).where(betweenDates, inTournamentId);
 
         return em.createQuery(cq).getResultList();
     }
+
 
 
 
