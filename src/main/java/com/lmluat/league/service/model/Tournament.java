@@ -5,9 +5,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.YearSerializer;
+
 import com.lmluat.league.utils.TournamentName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,14 +14,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Year;
 
-import static com.lmluat.league.exception.ErrorMessage.TOURNAMENT_NAME_LENGTH_CONSTRAINT;
-import static com.lmluat.league.exception.ErrorMessage.TOURNAMENT_NAME_NULL_OR_BLANK;
 
 @Getter
 @Setter
