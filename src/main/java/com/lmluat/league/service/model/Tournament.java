@@ -8,6 +8,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.deser.YearDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.YearSerializer;
+import com.lmluat.league.utils.TournamentName;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,8 +34,7 @@ public class Tournament {
 
     private Long id;
 
-    @Size(min = 3, message = TOURNAMENT_NAME_LENGTH_CONSTRAINT)
-    @NotBlank(message = TOURNAMENT_NAME_NULL_OR_BLANK)
+    @TournamentName
     private String tournamentName;
 
 

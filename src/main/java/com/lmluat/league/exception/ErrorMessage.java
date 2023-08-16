@@ -48,6 +48,8 @@ public class ErrorMessage {
 
     public static final String MATCH_DETAIL_NOT_FOUND = "Match Detail not found";
     public static final String KEY_MATCH_DETAIL_NOT_FOUND = "exception.resource.not.found.match.detail";
+    public static final String TOURNAMENT_NAME_CONSTRAINT = "Tournament name must start with 'minhluat-' and have at least 3 characters and at most 1000 characters.";
+    public static final String KEY_TOURNAMENT_NAME_CONSTRAINT = "exception.input.validation.tournament.name.constraint";
 
     private ErrorMessage() {
 
@@ -60,6 +62,7 @@ public class ErrorMessage {
         errorMap.put(TOURNAMENT_NAME_LENGTH_CONSTRAINT,KEY_TOURNAMENT_NAME_LENGTH_CONSTRAINT);
         errorMap.put(INPUT_DATA_NULL_OR_BLANK,KEY_INPUT_DATA_NULL_OR_BLANK);
         errorMap.put(INVALID_GAME_ID,KEY_INVALID_GAME_ID);
+        errorMap.put(TOURNAMENT_NAME_CONSTRAINT,KEY_TOURNAMENT_NAME_CONSTRAINT);
 
         return errorMap;
     }
