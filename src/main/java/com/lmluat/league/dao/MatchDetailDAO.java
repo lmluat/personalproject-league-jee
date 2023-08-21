@@ -2,30 +2,27 @@ package com.lmluat.league.dao;
 
 import com.lmluat.league.entity.MatchDetailEntity;
 import com.lmluat.league.entity.MatchEntity;
-import com.lmluat.league.exception.ErrorMessage;
-import com.lmluat.league.exception.ResourceNotFoundException;
-import com.lmluat.league.service.model.Match;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.swing.text.html.Option;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 @Stateless
 public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
     public MatchDetailDAO() {
         super(MatchDetailEntity.class);
     }
+
     @Inject
     private MatchDAO matchDAO;
 
@@ -91,7 +88,7 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
         return em.createQuery(cq).getResultList();
     }
 
-    public List<MatchDetailEntity> findBetweenDates(Optional<Long> tournamentId,LocalDate fromDate, LocalDate toDate) {
+    public List<MatchDetailEntity> findBetweenDates(Optional<Long> tournamentId, LocalDate fromDate, LocalDate toDate) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
 
         CriteriaQuery<MatchDetailEntity> cq = cb.createQuery(MatchDetailEntity.class);
@@ -108,9 +105,40 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
         return em.createQuery(cq).getResultList();
     }
 
+    public List<MatchDetailEntity> findByTeamName(String teamName) {
+        Query query = em.createQuery(
+                "SELECT m FROM MatchDetailEntity m " +
+                        "JOIN FETCH m.teamDetailEntity t " +
+                        "JOIN FETCH t.teamEntity team " +
+                        "WHERE team.teamName LIKE :teamName", MatchDetailEntity.class);
 
+        query.setParameter("teamName", "%" + teamName + "%");
 
+        return query.getResultList();
+    }
 
+    public List<MatchDetailEntity> findFromDateToDate(LocalDate fromDate, LocalDate toDate) {
+        Query query = em.createQuery(
+                "SELECT mde FROM MatchDetailEntity mde " +
+                "JOIN mde.match match " +
+                "WHERE match.date BETWEEN :fromDate AND :toDate ", MatchDetailEntity.class);
+
+        query.setParameter("fromDate", fromDate);
+        query.setParameter("toDate", toDate);
+
+        return query.getResultList();
+    }
+
+    public List<MatchDetailEntity> findByWinningTeamName(String winningTeamName) {
+        Query query = em.createQuery("SELECT mde FROM MatchDetailEntity mde " +
+                "JOIN FETCH mde.match match " +
+                "JOIN FETCH mde.winningTeam team " +
+                "WHERE team.teamName LIKE :winningTeamName", MatchDetailEntity.class);
+
+        query.setParameter("winningTeamName", "%" + winningTeamName + "%");
+
+        return query.getResultList();
+    }
 
 
 }
