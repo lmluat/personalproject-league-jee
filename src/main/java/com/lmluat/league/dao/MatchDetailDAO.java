@@ -49,12 +49,14 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
         Predicate inTeamId = cb.equal(root.get("winningTeam").get("team").get("id"), teamId.orElse(null));
         Predicate inTournamentId = cb.equal(root.get("match").get("tournament").get("id"), tournamentId.orElse(null));
 
-        cq.select(root).where(inTeamId, inTournamentId);
+       Predicate finalPredicate = cb.or(inTeamId, inTournamentId);
+
+        cq.select(root).where(finalPredicate);
 
         return em.createQuery(cq).getResultList();
     }
 
-    public List<MatchDetailEntity> findWinningGamesByTeamIdAndTournamentId(Optional<Long> teamId, Optional<Long> tournamentId) {
+    public List<MatchDetailEntity> findRankingTableInTournament(Optional<Long> teamId, Optional<Long> tournamentId) {
         CriteriaBuilder cb = em.getCriteriaBuilder();
 
         CriteriaQuery<MatchDetailEntity> cq = cb.createQuery(MatchDetailEntity.class);
@@ -67,23 +69,6 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
         Predicate condition = cb.and(winningGameListByTeamId, inTournamentId);
 
         cq.select(root).where(condition);
-
-        return em.createQuery(cq).getResultList();
-    }
-
-    public List<MatchDetailEntity> findByTournamentId(Long tournamentId) {
-
-        CriteriaBuilder cb = em.getCriteriaBuilder();
-
-        CriteriaQuery<MatchDetailEntity> cq = cb.createQuery(MatchDetailEntity.class);
-
-        Root<MatchDetailEntity> root = cq.from(MatchDetailEntity.class);
-
-        Join<MatchDetailEntity, MatchEntity> matchJoin = root.join("match");
-
-        Predicate inTournamentId = cb.equal(matchJoin.get("tournament").get("id"), tournamentId);
-
-        cq.select(root).where(inTournamentId);
 
         return em.createQuery(cq).getResultList();
     }
@@ -105,23 +90,39 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
         return em.createQuery(cq).getResultList();
     }
 
-    public List<MatchDetailEntity> findByTeamName(String teamName) {
-        Query query = em.createQuery(
-                "SELECT m FROM MatchDetailEntity m " +
-                        "JOIN FETCH m.teamDetailEntity t " +
-                        "JOIN FETCH t.teamEntity team " +
-                        "WHERE team.teamName LIKE :teamName", MatchDetailEntity.class);
+    public List<MatchDetailEntity> findByTournamentId(Long tournamentId) {
 
-        query.setParameter("teamName", "%" + teamName + "%");
+        CriteriaBuilder cb = em.getCriteriaBuilder();
 
-        return query.getResultList();
+        CriteriaQuery<MatchDetailEntity> cq = cb.createQuery(MatchDetailEntity.class);
+
+        Root<MatchDetailEntity> root = cq.from(MatchDetailEntity.class);
+
+        Join<MatchDetailEntity, MatchEntity> matchJoin = root.join("match");
+
+        Predicate inTournamentId = cb.equal(matchJoin.get("tournament").get("id"), tournamentId);
+
+        cq.select(root).where(inTournamentId);
+
+        return em.createQuery(cq).getResultList();
     }
+
+    public List<MatchDetailEntity> findByTournamentName(String tournamentName) {
+        return em.createQuery(
+                        "SELECT md FROM MatchDetailEntity md " +
+                                "JOIN MatchEntity m ON m.id = md.match.id " +
+                                "JOIN TournamentEntity t ON t.id = m.tournament.id " +
+                                "WHERE LOWER(t.tournamentName) LIKE :tournamentName", MatchDetailEntity.class)
+                .setParameter("tournamentName", "%" + tournamentName + "%")
+                .getResultList();
+    }
+
 
     public List<MatchDetailEntity> findFromDateToDate(LocalDate fromDate, LocalDate toDate) {
         Query query = em.createQuery(
                 "SELECT mde FROM MatchDetailEntity mde " +
-                "JOIN mde.match match " +
-                "WHERE match.date BETWEEN :fromDate AND :toDate ", MatchDetailEntity.class);
+                        "JOIN MatchEntity match " +
+                        "WHERE match.date BETWEEN :fromDate AND :toDate ", MatchDetailEntity.class);
 
         query.setParameter("fromDate", fromDate);
         query.setParameter("toDate", toDate);
@@ -130,15 +131,13 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
     }
 
     public List<MatchDetailEntity> findByWinningTeamName(String winningTeamName) {
-        Query query = em.createQuery("SELECT mde FROM MatchDetailEntity mde " +
-                "JOIN FETCH mde.match match " +
+
+        return em.createQuery("SELECT mde FROM MatchDetailEntity mde " +
+                "JOIN TeamDetailEntity team ON team.id = mde.winningTeam " +
                 "JOIN FETCH mde.winningTeam team " +
-                "WHERE team.teamName LIKE :winningTeamName", MatchDetailEntity.class);
+                "WHERE team.teamName LIKE :winningTeamName", MatchDetailEntity.class)
+                .setParameter("winningTeamName", "%" + winningTeamName + "%")
+                .getResultList();
 
-        query.setParameter("winningTeamName", "%" + winningTeamName + "%");
-
-        return query.getResultList();
     }
-
-
 }

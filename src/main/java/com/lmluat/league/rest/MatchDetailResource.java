@@ -56,4 +56,19 @@ public class MatchDetailResource {
     public Response getBetweenDates(@QueryParam("tournamentId") Optional<Long> tournamentId, @QueryParam("startDate") LocalDate startDate, @QueryParam("endDate") LocalDate endDate) throws ResourceNotFoundException {
         return Response.ok(matchDetailService.getBetweenDates(tournamentId, startDate, endDate)).build();
     }
+    @GET
+    @Path("/tournament-name")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getByTeamName(@QueryParam("tournamentName") String tournamentName) {
+        return Response.ok(matchDetailService.getByTournamentName(tournamentName)).build();
+    }
+
+    @GET
+    @Path("/criteria")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getByCriteria(@QueryParam("teamId") Optional<Long> teamId, @QueryParam("tournamentId") Optional<Long> tournamentId) {
+        return Response.ok(matchDetailService.getByCriteria(teamId,tournamentId)).build();
+    }
 }

@@ -215,7 +215,7 @@ public class MatchDetailService {
         Map<TeamDetail, Optional<Integer>> teamWinningGameList = new HashMap<TeamDetail, Optional<Integer>>();
 
         for (TeamDetail teamDetail : teamDetailList) {
-            Integer teamWinningGameTotal = matchDetailDAO.findWinningGamesByTeamIdAndTournamentId(Optional.ofNullable(teamDetail.getId()), Optional.ofNullable(tournamentId)).size();
+            Integer teamWinningGameTotal = matchDetailDAO.findRankingTableInTournament(Optional.ofNullable(teamDetail.getId()), Optional.ofNullable(tournamentId)).size();
             teamWinningGameList.put(teamDetail, Optional.of(teamWinningGameTotal));
         }
         List<TeamDetailDTO> teamDetailDTOList = new ArrayList<>();
@@ -235,5 +235,15 @@ public class MatchDetailService {
     public List<MatchDetail> getBetweenDates(Optional<Long> tournamentId, LocalDate startDate, LocalDate endDate) {
         return matchDetailMapper.toDTOList(matchDetailDAO.findBetweenDates(tournamentId, startDate, endDate));
     }
+
+    public List<MatchDetail> getByTournamentName(String tournamentName){
+        return matchDetailMapper.toDTOList(matchDetailDAO.findByTournamentName(tournamentName.trim().toLowerCase()));
+    }
+
+    public List<MatchDetail> getByCriteria(Optional<Long> teamId, Optional<Long> tournamentId){
+        return matchDetailMapper.toDTOList(matchDetailDAO.findByCriteria(teamId, tournamentId));
+    }
+
+
 }
 
