@@ -103,11 +103,11 @@ public class TeamDetailService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        teamName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("team").get("teamName"), "%" + s.trim() + "%")));
+        teamName.ifPresent(s -> predicates.add(cb.like(cb.lower(teamDetailEntityRoot.get("team").get("teamName")), "%" + s.trim().toLowerCase() + "%")));
 
-        tournamentName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("tournament").get("tournamentName"), "%" + s.trim() + "%")));
+        tournamentName.ifPresent(s -> predicates.add(cb.like(cb.lower(teamDetailEntityRoot.get("tournament").get("tournamentName")), "%" + s.trim().toLowerCase() + "%")));
 
-        coachName.ifPresent(s -> predicates.add(cb.like(teamDetailEntityRoot.get("coach").get("ingameName"), "%" + s.trim() + "%")));
+        coachName.ifPresent(s -> predicates.add(cb.like(cb.lower(teamDetailEntityRoot.get("coach").get("ingameName")), "%" + s.trim().toLowerCase() + "%")));
 
         cq.where(predicates.toArray(new Predicate[0]));
 
