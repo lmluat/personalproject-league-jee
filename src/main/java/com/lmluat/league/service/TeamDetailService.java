@@ -10,7 +10,6 @@ import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.mapper.TeamDetailMapper;
 import com.lmluat.league.service.model.TeamDetail;
-import com.lmluat.league.service.model.custom.TeamDetailDTO;
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
@@ -26,7 +25,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.lang.module.ResolutionException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

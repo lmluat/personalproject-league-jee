@@ -1,10 +1,13 @@
 package com.lmluat.league.rest;
 
 import com.lmluat.league.exception.InputValidationException;
+import com.lmluat.league.exception.InputValidationExceptionMapper;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.TournamentService;
 import com.lmluat.league.service.model.Tournament;
 import com.lmluat.league.utils.TournamentParameters;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.inject.Inject;
 import javax.ws.rs.BeanParam;
@@ -23,13 +26,14 @@ import java.time.LocalDate;
 
 @Path("/tournaments")
 public class TournamentResource {
-
+    private static final Logger logger = LogManager.getLogger(TournamentResource.class);
     @Inject
     private TournamentService tournamentService;
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getAll() throws ResourceNotFoundException {
+    public Response getAll() {
+        logger.info("Getting all tournaments");
         return Response.ok(tournamentService.getAll()).build();
     }
 
