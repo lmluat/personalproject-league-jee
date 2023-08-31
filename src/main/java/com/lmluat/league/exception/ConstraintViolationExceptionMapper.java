@@ -1,5 +1,9 @@
 package com.lmluat.league.exception;
 
+import com.lmluat.league.rest.TournamentResource;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
@@ -13,8 +17,11 @@ import java.util.List;
 import java.util.Set;
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
+    private static final Logger logger = LogManager.getLogger(TournamentResource.class);
     @Override
     public Response toResponse(ConstraintViolationException e) {
+
+        logger.error(e.getMessage());
 
         Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
 
