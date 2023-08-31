@@ -5,7 +5,6 @@ import com.lmluat.league.entity.MatchEntity;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -49,7 +48,7 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
         Predicate inTeamId = cb.equal(root.get("winningTeam").get("team").get("id"), teamId.orElse(null));
         Predicate inTournamentId = cb.equal(root.get("match").get("tournament").get("id"), tournamentId.orElse(null));
 
-       Predicate finalPredicate = cb.or(inTeamId, inTournamentId);
+        Predicate finalPredicate = cb.or(inTeamId, inTournamentId);
 
         cq.select(root).where(finalPredicate);
 
@@ -119,24 +118,25 @@ public class MatchDetailDAO extends BaseDAO<MatchDetailEntity> {
 
 
     public List<MatchDetailEntity> findFromDateToDate(LocalDate fromDate, LocalDate toDate) {
-        Query query = em.createQuery(
-                "SELECT mde FROM MatchDetailEntity mde " +
-                        "JOIN MatchEntity match " +
-                        "WHERE match.date BETWEEN :fromDate AND :toDate ", MatchDetailEntity.class);
 
-        query.setParameter("fromDate", fromDate);
-        query.setParameter("toDate", toDate);
+        return em.createQuery(
+                        "SELECT mde FROM MatchDetailEntity mde " +
+                                "JOIN MatchEntity match ON match.id = mde.match.id " +
+                                "WHERE match.date BETWEEN :fromDate AND :toDate " +
+                                "OR match.date >= :fromDate", MatchDetailEntity.class)
+                .setParameter("fromDate", fromDate)
+                .setParameter("toDate", toDate)
+                .getResultList();
 
-        return query.getResultList();
     }
 
-    public List<MatchDetailEntity> findByWinningTeamName(String winningTeamName) {
+    public List<MatchDetailEntity> findByWinningTeam(String winningTeamName) {
 
         return em.createQuery("SELECT mde FROM MatchDetailEntity mde " +
-                "JOIN TeamDetailEntity team ON team.id = mde.winningTeam " +
-                "JOIN FETCH mde.winningTeam team " +
-                "WHERE team.teamName LIKE :winningTeamName", MatchDetailEntity.class)
-                .setParameter("winningTeamName", "%" + winningTeamName + "%")
+                        "JOIN TeamDetailEntity td ON td.id = mde.winningTeam.team.id " +
+                        "JOIN TeamEntity t ON t.id = td.team.id " +
+                        "WHERE LOWER(t.teamName) LIKE :winningTeamName", MatchDetailEntity.class)
+                .setParameter("winningTeamName", "%" + winningTeamName.trim().toLowerCase() + "%")
                 .getResultList();
 
     }

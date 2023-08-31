@@ -71,4 +71,21 @@ public class MatchDetailResource {
     public Response getByCriteria(@QueryParam("teamId") Optional<Long> teamId, @QueryParam("tournamentId") Optional<Long> tournamentId) {
         return Response.ok(matchDetailService.getByCriteria(teamId,tournamentId)).build();
     }
+
+    @GET
+    @Path("/winning-team")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getByWinningTeam(@QueryParam("teamName") String teamName) {
+        return Response.ok(matchDetailService.getByWinningTeam(teamName)).build();
+    }
+
+    @GET
+    @Path("/time")
+    @Consumes({MediaType.APPLICATION_JSON})
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getByDates(@QueryParam("startDate") LocalDate startDate, @QueryParam("endDate") LocalDate endDate) {
+        return Response.ok(matchDetailService.getByDates(startDate, endDate)).build();
+    }
+
 }

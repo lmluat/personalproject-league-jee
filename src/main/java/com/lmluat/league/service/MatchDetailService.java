@@ -244,6 +244,13 @@ public class MatchDetailService {
         return matchDetailMapper.toDTOList(matchDetailDAO.findByCriteria(teamId, tournamentId));
     }
 
+    public List<MatchDetail> getByWinningTeam(String teamName){
+        return matchDetailMapper.toDTOList(matchDetailDAO.findByWinningTeam(teamName.trim().toLowerCase()));
+    }
+
+    public List<MatchDetail> getByDates(LocalDate startDate, LocalDate endDate){
+        return matchDetailMapper.toDTOList(matchDetailDAO.findFromDateToDate(startDate, endDate));
+    }
 
 }
 
