@@ -4,8 +4,7 @@ import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.MatchDetailService;
 import com.lmluat.league.service.model.MatchDetail;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.lmluat.league.utils.ApplicationLogger;
 
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -23,7 +22,8 @@ import java.util.Optional;
 
 @Path("/match-details")
 public class MatchDetailResource {
-    private static final Logger logger = LogManager.getLogger(TournamentResource.class);
+    @Inject
+    private ApplicationLogger logger;
     @Inject
     private MatchDetailService matchDetailService;
 
@@ -49,7 +49,7 @@ public class MatchDetailResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response getByCriteria(@QueryParam("tournamentId") Long tournamentId) {
-        logger.info("Get ranking table");
+        logger.logInfo("Get ranking table");
         return Response.ok(matchDetailService.getRankingTableByTournamentId(tournamentId)).build();
     }
 
@@ -65,7 +65,7 @@ public class MatchDetailResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response getByTeamName(@QueryParam("tournamentName") String tournamentName) {
-        logger.info("Get by team name: " + tournamentName);
+        logger.logInfo("Get by team name: " + tournamentName);
         return Response.ok(matchDetailService.getByTournamentName(tournamentName)).build();
     }
 
@@ -74,7 +74,7 @@ public class MatchDetailResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response getByCriteria(@QueryParam("teamId") Optional<Long> teamId, @QueryParam("tournamentId") Optional<Long> tournamentId) {
-        logger.info("Get by criteria");
+        logger.logInfo("Get by criteria");
         return Response.ok(matchDetailService.getByCriteria(teamId,tournamentId)).build();
     }
 
@@ -83,7 +83,7 @@ public class MatchDetailResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response getByWinningTeam(@QueryParam("teamName") String teamName) {
-        logger.info("Get by winning team name: " + teamName);
+        logger.logInfo("Get by winning team name: " + teamName);
         return Response.ok(matchDetailService.getByWinningTeam(teamName)).build();
     }
 
@@ -92,7 +92,7 @@ public class MatchDetailResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response getByDates(@QueryParam("startDate") LocalDate startDate, @QueryParam("endDate") LocalDate endDate) {
-        logger.info("Get by dates");
+        logger.logInfo("Get by dates");
         return Response.ok(matchDetailService.getByDates(startDate, endDate)).build();
     }
 

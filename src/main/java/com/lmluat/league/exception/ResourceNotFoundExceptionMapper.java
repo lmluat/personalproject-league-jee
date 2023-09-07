@@ -11,7 +11,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class ResourceNotFoundExceptionMapper implements ExceptionMapper<ResourceNotFoundException> {
-    private static final Logger logger = LogManager.getLogger(TournamentResource.class);
+    private static final Logger logger = LogManager.getLogger(ResourceNotFoundException.class);
     @Override
     public Response toResponse(ResourceNotFoundException e) {
         logger.error(e.getMessage());

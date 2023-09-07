@@ -4,6 +4,7 @@ import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.ResourceNotFoundException;
 import com.lmluat.league.service.TeamService;
 import com.lmluat.league.service.model.Team;
+import com.lmluat.league.utils.ApplicationLogger;
 
 
 import javax.inject.Inject;
@@ -18,13 +19,16 @@ import java.net.URI;
 
 @Path("/teams")
 public class TeamResource {
-
+    @Inject
+    private ApplicationLogger logger;
     @Inject
     private TeamService teamService;
 
     @GET
     @Produces({MediaType.APPLICATION_JSON})
     public Response getAll() throws ResourceNotFoundException {
+        System.out.println(logger.getClass());
+        logger.logInfo("Get all teams");
         return Response.ok(teamService.getAll()).build();
     }
 

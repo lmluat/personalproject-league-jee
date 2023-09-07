@@ -1,8 +1,10 @@
 package com.lmluat.league.exception;
 
+import com.lmluat.league.utils.ApplicationLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -11,7 +13,8 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class InputValidationExceptionMapper implements ExceptionMapper<InputValidationException> {
 
-    private static final Logger logger = LogManager.getLogger(InputValidationExceptionMapper.class);
+    @Inject
+    private ApplicationLogger logger;
 
     @Override
     public Response toResponse(InputValidationException e) {
@@ -20,7 +23,7 @@ public class InputValidationExceptionMapper implements ExceptionMapper<InputVali
                 stackTraceArray[0].getClassName(),
                 stackTraceArray[0].getLineNumber(),
                 e.getResponseBody().getErrorMessage());
-        logger.info(logMessage);
+        logger.logInfo(logMessage);
         ResponseBody responseBody = e.getResponseBody();
         return Response.status(responseBody.getStatus())
                 .entity(responseBody)
