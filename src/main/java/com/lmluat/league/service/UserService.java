@@ -41,5 +41,9 @@ public class UserService {
         return userMapper.toDTO(userDAO.create(userEntity));
     }
 
+    public UserEntity getUser(String username) {
+        return userDAO.getUser(username);
+    }
+
 
 }

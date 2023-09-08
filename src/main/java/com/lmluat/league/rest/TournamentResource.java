@@ -1,5 +1,6 @@
 package com.lmluat.league.rest;
 
+import com.lmluat.league.entity.RoleEnum;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.exception.InputValidationExceptionMapper;
 import com.lmluat.league.exception.ResourceNotFoundException;
@@ -10,6 +11,8 @@ import com.lmluat.league.utils.TournamentParameters;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
@@ -33,6 +36,7 @@ public class TournamentResource {
     private TournamentService tournamentService;
 
     @GET
+    @RolesAllowed({"ROLE_USER"})
     @Produces({MediaType.APPLICATION_JSON})
     public Response getAll() {
         System.out.println(logger);
@@ -48,6 +52,7 @@ public class TournamentResource {
     }
 
     @POST
+    @RolesAllowed("ROLE_USER")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
     public Response create(Tournament tournament) throws InputValidationException {
