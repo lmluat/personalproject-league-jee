@@ -20,7 +20,7 @@ public class LeagueSecurityContext implements SecurityContext {
 
     @Override
     public boolean isUserInRole(String s) {
-        return role.equals(RoleEnum.ROLE_USER);
+        return role.name().equals(s);
     }
 
     @Override

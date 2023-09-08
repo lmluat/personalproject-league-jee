@@ -1,6 +1,5 @@
 package com.lmluat.league.utils;
 
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -15,8 +14,7 @@ import com.lmluat.league.exception.AuthorizationException;
 import com.lmluat.league.exception.InputValidationException;
 import com.lmluat.league.service.AuthService;
 import com.lmluat.league.service.UserService;
-import com.lmluat.league.utils.JwtRequest;
-import io.jsonwebtoken.SignatureAlgorithm;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 
@@ -27,7 +25,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Validation;
 import javax.validation.Validator;
-import javax.ws.rs.core.Response;
+
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;

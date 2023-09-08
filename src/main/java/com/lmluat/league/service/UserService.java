@@ -31,11 +31,12 @@ public class UserService {
     private UserMapper userMapper;
 
     public UserDTO create(UserDTO user) throws InputValidationException, IllegalArgumentException {
+
         UserEntity userEntity = UserEntity.builder()
                 .name(user.getName().trim())
                 .password(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()))
                 .status(StatusEnum.ACTIVE)
-                .role(RoleEnum.ROLE_USER)
+                .role(RoleEnum.ROLE_ADMIN)
                 .build();
 
         return userMapper.toDTO(userDAO.create(userEntity));

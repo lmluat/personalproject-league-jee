@@ -36,7 +36,6 @@ public class TournamentResource {
     private TournamentService tournamentService;
 
     @GET
-    @RolesAllowed({"ROLE_USER"})
     @Produces({MediaType.APPLICATION_JSON})
     public Response getAll() {
         System.out.println(logger);
@@ -52,9 +51,9 @@ public class TournamentResource {
     }
 
     @POST
-    @RolesAllowed("ROLE_USER")
     @Consumes({MediaType.APPLICATION_JSON})
     @Produces({MediaType.APPLICATION_JSON})
+    @RolesAllowed({"ROLE_ADMIN"})
     public Response create(Tournament tournament) throws InputValidationException {
             Tournament createdTournament = tournamentService.create(tournament);
             return Response.created(URI.create("tournament/" + createdTournament.getId())).entity(createdTournament).status(Response.Status.CREATED).build();
